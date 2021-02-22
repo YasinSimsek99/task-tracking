@@ -1,10 +1,18 @@
 package com.haratres.tasktracking.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -12,20 +20,19 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
+	@Column(name = "user_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true, length = 45)
-	private String email;
-
-	@Column(nullable = false, length = 64)
+	@Column(name = "username")
+	private String username;
+	@Column(name = "password")
 	private String password;
+	private boolean enabled = true;
 
-	@Column(name = "first_name", nullable = false, length = 20)
-	private String firstName;
-
-	@Column(name = "last_name", nullable = false, length = 20)
-	private String lastName;
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -35,12 +42,12 @@ public class User {
 		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -51,20 +58,30 @@ public class User {
 		this.password = password;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public boolean isEnabled() {
+		return enabled;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public User() {
+	}
+
+	public User(String username, String password, boolean enabled, Set<Role> roles) {
+		this.username = username;
+		this.password = password;
+		this.enabled = enabled;
+		this.roles = roles;
 	}
 
 }

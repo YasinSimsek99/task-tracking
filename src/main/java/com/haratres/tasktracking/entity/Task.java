@@ -17,14 +17,28 @@ public class Task {
 	private Long id;
 	@Column(name = "task_name")
 	private String taskName;
+	@Column(name = "username")
+	private String username;
 	@Column(name = "description")
 	private String description;
 	@Column(name = "status")
 	private String status;
 	@Column(name = "complate_date")
-	private String comlateDate;
+	private String complateDate;
 	@Column(name = "user_id")
-	private int userId;
+	private long userId;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
 
 	public Long getId() {
 		return id;
@@ -58,27 +72,34 @@ public class Task {
 		this.status = status;
 	}
 
-	public String getComlateDate() {
-		return comlateDate;
+	public String getComplateDate() {
+		return complateDate;
 	}
 
-	public void setComlateDate(String comlateDate) {
-		this.comlateDate = comlateDate;
+	public void setComplateDate(String comlateDate) {
+		this.complateDate = comlateDate;
 	}
 
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
-	public Task(String taskName, String description, String status, String comlateDate, int userId) {
+	@Override
+	public String toString() {
+		return "Task [id=" + id + ", taskName=" + taskName + ", username=" + username + ", description=" + description
+				+ ", status=" + status + ", complateDate=" + complateDate + ", userId=" + userId + "]";
+	}
+
+	public Task(String taskName, String username, String description, String status, String complateDate, long userId) {
 		this.taskName = taskName;
+		this.username = username;
 		this.description = description;
 		this.status = status;
-		this.comlateDate = comlateDate;
+		this.complateDate = complateDate;
 		this.userId = userId;
 	}
 

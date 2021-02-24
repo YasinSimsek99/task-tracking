@@ -11,21 +11,17 @@ import com.haratres.tasktracking.entity.Task;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-	private TaskRepository taskRepository;
-
 	@Autowired
-	public TaskServiceImpl(TaskRepository taskRepository) {
-		this.taskRepository = taskRepository;
-	}
+	private TaskRepository taskRepository;
 
 	@Override
 	public void save(Task task) {
-		taskRepository.save(task);		
+		taskRepository.save(task);
 	}
 
 	@Override
 	public void deleteAll() {
-		taskRepository.deleteAll();		
+		taskRepository.deleteAll();
 	}
 
 	@Override
@@ -37,6 +33,31 @@ public class TaskServiceImpl implements TaskService {
 	public List<Task> findByUserId(String userId) {
 		return taskRepository.findByUserId(userId);
 	}
-	
-	
+
+	@Override
+	public void deleteById(Long id) {
+		taskRepository.deleteById(id);
+	}
+
+	@Override
+	public Task findById(Long id) {
+		return taskRepository.findById(id).get();
+	}
+
+	@Override
+	public List<Task> findByUsername(String username) {
+
+		return taskRepository.findByUsername(username);
+	}
+
+	@Override
+	public List<Task> findByStatusAndUsername(String status, String username) {
+		return taskRepository.findByStatusAndUsername(status, username);
+	}
+
+	@Override
+	public List<Task> findByStatus(String status) {
+		return taskRepository.findByStatus(status);
+	}
+
 }

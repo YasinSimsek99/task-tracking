@@ -43,17 +43,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/").hasAnyAuthority("USER", "CREATOR", "EDITOR", "ADMIN")
-			.antMatchers("/new").hasAnyAuthority("ADMIN", "CREATOR")
-			.antMatchers("/edit/**").hasAnyAuthority("ADMIN", "EDITOR")
-			.antMatchers("/delete/**").hasAuthority("ADMIN")
+			.antMatchers("/user/**").hasAnyAuthority("STANDART_USER")
+			.antMatchers("/admin/**").hasAuthority("ADMIN")
+			.antMatchers("/", "/register", "/process_register").permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.formLogin().permitAll()
+			.formLogin().loginPage("/login").defaultSuccessUrl("/dashboard",true).permitAll()
 			.and()
 			.logout().permitAll()
 			.and()
-			.exceptionHandling().accessDeniedPage("/403")
-			;
+			.exceptionHandling().accessDeniedPage("/403");
+		
+		
 	}
 }

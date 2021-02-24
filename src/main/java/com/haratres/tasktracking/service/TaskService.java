@@ -13,5 +13,15 @@ public interface TaskService {
 	public List<Task> findAll();
 
 	public List<Task> findByUserId(String userId);
+	
+	public List<Task> findByUsername(String username);
+	
+	public void deleteById(Long id);
+	
+	public Task findById(Long id);
+	
+	public List<Task> findByStatusAndUsername(String status, String username);
+	
+	public List<Task> findByStatus(String status);
 
 }

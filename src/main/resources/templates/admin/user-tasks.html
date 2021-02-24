@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Yönetici Sayfası</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+		integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+</head>
+<style>
+	th,
+	td {
+		vertical-align: middle !important;
+	}
+
+	.custom-select {
+		position: relative;
+		font-family: Arial;
+	}
+
+	.custom-select select {
+		display: none;
+		/*hide original SELECT element:*/
+	}
+
+	.select-selected {
+		background-color: DodgerBlue;
+	}
+
+	/*style the arrow inside the select element:*/
+	.select-selected:after {
+		position: absolute;
+		content: "";
+		top: 14px;
+		right: 10px;
+		width: 0;
+		height: 0;
+		border: 6px solid transparent;
+		border-color: #fff transparent transparent transparent;
+	}
+
+	/*point the arrow upwards when the select box is open (active):*/
+	.select-selected.select-arrow-active:after {
+		border-color: transparent transparent #fff transparent;
+		top: 7px;
+	}
+
+	/*style the items (options), including the selected item:*/
+	.select-items div,
+	.select-selected {
+		color: #ffffff;
+		padding: 8px 16px;
+		border: 1px solid transparent;
+		border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	/*style items (options):*/
+	.select-items {
+		position: absolute;
+		background-color: DodgerBlue;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 99;
+	}
+
+	/*hide the items when the select box is closed:*/
+	.select-hide {
+		display: none;
+	}
+
+	.select-items div:hover,
+	.same-as-selected {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+</style>
+
+<body>
+
+	<nav class="navbar navbar-inverse" style="background-color: rgba(228, 228, 228, 0.74);">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<div sec:authorize="isAuthenticated()" style="text-transform: uppercase;">
+					<b><span sec:authentication="name"></span> &nbsp; </b>Hoşgeldin
+				</div>
+			</div>
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<form th:action="@{/logout}" method="post">
+						<input class="btn btn-danger" type="submit" value="Çıkış Yap" />
+					</form>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<br>
+
+	<div class="container-fluid" style="padding-right: 2em; padding-left: 2em;">
+		<div sec:authorize="hasAnyAuthority('ADMIN')">
+			<a href="new" class="btn btn-success">Bir Kullanıcıya Görev Oluştur</a>
+		</div>
+		<br>
+		<div class="row">
+			<form th:action="@{/admin/task/list/status}" method="post" th:object="${select}">
+				<label> Şu statüdekileri getir :</label>
+				<label><select th:field="${select.status}" class="custom-select">
+						<option th:value="'Yapılacak'">Yapılacak</option>
+						<option th:value="'Ertelendi'">Ertelendi</option>
+						<option th:value="'Iptal'">İptal Edildi</option>
+						<option th:value="'Tamamlandı'">Tamamlandı</option>
+						<option th:value="'Hepsi'">Hepsi</option>
+					</select></label>
+				<button type="submit" class="btn btn-dark">Getir</button>
+			</form>
+		</div>
+		<br>
+
+		<input type="text" class="form-control" id="myInput" onkeyup="myFunction()" placeholder="Kullanıcı adına göre ara"
+			title="Type in a name">
+		<div class="row table-responsive">
+			<table class="table" id="myTable">
+				<thead>
+					<tr>
+
+						<th>Kullanıcı Adı</th>
+						<th>Görev Adı</th>
+						<th>Görevin Açıklaması</th>
+						<th>Teslim Tarihi</th>
+						<th>Statü</th>
+
+						<th sec:authorize="hasAnyAuthority('ADMIN')">İşlemler</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="task : ${tasks}">
+						<td th:text="${task.username}"></td>
+						<td th:text="${task.taskName}"></td>
+						<td th:text="${task.description}"></td>
+						<td th:text="${task.complateDate}"></td>
+						<td th:text="${task.status}"></td>
+
+						<td sec:authorize="hasAnyAuthority('ADMIN')">
+							<a th:href="@{'/admin/edit/' + ${task.id}}" class="btn btn-dark col-12">Düzenle</a>
+							<a sec:authorize="hasAuthority('ADMIN')" class="btn btn-danger col-12"
+								th:href="@{'/admin/delete/' + ${task.id}}" onclick="if(!(confirm('Bu görevi silmek istediğinize emin misiniz?'))) return false">Sil</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script>
+		function myFunction() {
+			var input, filter, table, tr, td, i, txtValue;
+			input = document.getElementById("myInput");
+			filter = input.value.toUpperCase();
+			table = document.getElementById("myTable");
+			tr = table.getElementsByTagName("tr");
+			for (i = 0; i < tr.length; i++) {
+				td = tr[i].getElementsByTagName("td")[0];
+				if (td) {
+					txtValue = td.textContent || td.innerText;
+					if (txtValue.toUpperCase().indexOf(filter) > -1) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>
